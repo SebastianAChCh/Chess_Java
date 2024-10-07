@@ -1,6 +1,8 @@
 package pieces;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
 
 import chess.Board;
 import typesChess.PieceType;
@@ -21,9 +23,34 @@ public class Pawn extends Pieces {
 	public void checkPosition(boolean isKingTesting) {
 		positions.removeIf(position -> position.axisX == originAxisX && position.axisY == originAxisY);
 
-		board.pieces.stream().forEach(piece -> positions
-				.removeIf(position -> piece.axisX == position.axisX && piece.axisY == position.axisY
-						&& (piece.Team == Team || position.typeCell == TypeCell.VOID)));
+		board.pieces.forEach(piece -> {
+			List<Positions> toRemove = new ArrayList<>();
+			
+			positions.forEach(position -> {
+
+                /* Check if the position has an allied piece that cannot be eaten.
+                * or if the position is of type VOID, so as not to allow the current pawn to move over an allied piece.
+                * to move over an allied piece.
+                */
+				if (position.axisX == piece.axisX && position.axisY == piece.axisY && position.typeCell == TypeCell.VOID && Team == TeamType.BLACK) {
+					positions.stream()
+						.filter(pos -> pos.axisX >= piece.axisX && pos.axisY >= piece.axisY && pos.typeCell == TypeCell.VOID)
+						.forEach(toRemove::add);
+				} else if (position.axisX == piece.axisX && position.axisY == piece.axisY && position.typeCell == TypeCell.VOID && Team == TeamType.WHITE) {
+					positions.stream()
+						.filter(pos -> pos.axisX <= piece.axisX && pos.axisY <= piece.axisY && pos.typeCell == TypeCell.VOID)
+						.forEach(toRemove::add);
+				}
+
+				if (position.axisX == piece.axisX && position.axisY == piece.axisY && piece.Team == Team) {
+					toRemove.add(position);
+				}
+			});
+
+			positions.removeAll(toRemove);
+		});
+
+
 		if(!isKingTesting){
 			// check if the piece is not attacking a enemy piece
 			positions.removeIf(position -> board.pieces

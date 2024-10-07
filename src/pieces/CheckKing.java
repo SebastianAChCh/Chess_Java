@@ -78,13 +78,22 @@ public class CheckKing {
 
 		if (otherPiece.size() > 0) return;
 
-		enemyPiece.getPath(false);
-		currentPiece.positions.removeIf(currentPiecePosition -> {
-			int tempDiagonalXKing = Math.abs(currentPiecePosition.axisX - KING.axisX);
-			int tempDiagonalYKing = Math.abs(currentPiecePosition.axisY - KING.axisY);
-			return tempDiagonalXKing != tempDiagonalYKing;
+		currentPiece.positions.removeIf(position -> {
+			int tempDiagonalX = Math.abs(position.axisX - enemyPiece.axisX);
+			int tempDiagonalY = Math.abs(position.axisY - enemyPiece.axisY);
+			int tempDiagonalXKing = Math.abs(position.axisX - KING.axisX);
+			int tempDiagonalYKing = Math.abs(position.axisY - KING.axisY);
+
+			if(position.axisX == enemyPiece.axisX && position.axisY == enemyPiece.axisY) return false;
+
+			return !((tempDiagonalX == tempDiagonalY && tempDiagonalXKing == tempDiagonalYKing) && (
+				(position.axisX > KING.axisX && position.axisY > KING.axisY && position.axisX < enemyPiece.axisX && position.axisY < enemyPiece.axisY)||
+				(position.axisX < KING.axisX && position.axisY < KING.axisY && position.axisX > enemyPiece.axisX && position.axisY > enemyPiece.axisY)||
+				(position.axisX < KING.axisX && position.axisY > KING.axisY && position.axisX > enemyPiece.axisX && position.axisY < enemyPiece.axisY)||
+				(position.axisX > KING.axisX && position.axisY < KING.axisY && position.axisX < enemyPiece.axisX && position.axisY > enemyPiece.axisY)
+			));
 		});
-		enemyPiece.positions.clear();
+
 	}
 
 	private void QUEEN(Pieces enemyPiece, Pieces KING, Pieces currentPiece){
@@ -125,29 +134,38 @@ public class CheckKing {
 
 			if (otherPiece.size() > 0) return;
 
-			enemyPiece.getPath(false);
-			currentPiece.positions.removeIf(currentPiecePosition -> {
-				int tempDiagonalXKing = Math.abs(currentPiecePosition.axisX - KING.axisX);
-				int tempDiagonalYKing = Math.abs(currentPiecePosition.axisY - KING.axisY);
-				return tempDiagonalXKing != tempDiagonalYKing;
+			currentPiece.positions.removeIf(position -> {
+				int tempDiagonalX = Math.abs(position.axisX - enemyPiece.axisX);
+				int tempDiagonalY = Math.abs(position.axisY - enemyPiece.axisY);
+				int tempDiagonalXKing = Math.abs(position.axisX - KING.axisX);
+				int tempDiagonalYKing = Math.abs(position.axisY - KING.axisY);
+	
+				if(position.axisX == enemyPiece.axisX && position.axisY == enemyPiece.axisY) return false;
+	
+				return !((tempDiagonalX == tempDiagonalY && tempDiagonalXKing == tempDiagonalYKing) && (
+					(position.axisX > KING.axisX && position.axisY > KING.axisY && position.axisX < enemyPiece.axisX && position.axisY < enemyPiece.axisY)||
+					(position.axisX < KING.axisX && position.axisY < KING.axisY && position.axisX > enemyPiece.axisX && position.axisY > enemyPiece.axisY)||
+					(position.axisX < KING.axisX && position.axisY > KING.axisY && position.axisX > enemyPiece.axisX && position.axisY < enemyPiece.axisY)||
+					(position.axisX > KING.axisX && position.axisY < KING.axisY && position.axisX < enemyPiece.axisX && position.axisY > enemyPiece.axisY)
+				));
 			});
-			enemyPiece.positions.clear();
 		}else if((row == 0 && rowKing == 0) || (col == 0 && colKing == 0)){
-			// check if there is another piece that can protect the king, for example, the rook wants to be moved and behind there's a pawn that can
-			// protect the king
-			var otherPiece = board.pieces.stream().filter(pieceBoard -> {
-				//check also if the piece is between the king and the enemy piece
-				if((row == 0 && rowKing == 0)) return (pieceBoard.axisX == currentPiece.originAxisX && pieceBoard.Team == currentPiece.Team) && (
-					(pieceBoard.axisX > KING.axisX && pieceBoard.axisX < enemyPiece.axisX) || (pieceBoard.axisX < KING.axisX && pieceBoard.axisX > enemyPiece.axisX));
-				else return (pieceBoard.axisY == currentPiece.originAxisY && pieceBoard.Team == currentPiece.Team)  && (
-					(pieceBoard.axisY > KING.axisY && pieceBoard.axisY < enemyPiece.axisY) || (pieceBoard.axisY < KING.axisY && pieceBoard.axisY > enemyPiece.axisY));
-			}).findFirst().get();
+		// check if there is another piece that can protect the king, for example, the rook wants to be moved and behind there's a pawn that can
+		// protect the king
+		var otherPiece = board.pieces.stream().filter(pieceBoard -> {
+			//check also if the piece is between the king and the enemy piece
+			if((row == 0 && rowKing == 0)) return (pieceBoard.axisX == currentPiece.originAxisX && pieceBoard.Team == currentPiece.Team) && (
+				(pieceBoard.axisX > KING.axisX && pieceBoard.axisX < enemyPiece.axisX) || (pieceBoard.axisX < KING.axisX && pieceBoard.axisX > enemyPiece.axisX)) &&
+				pieceBoard.Piece != PieceType.KING;
+			else return (pieceBoard.axisY == currentPiece.originAxisY && pieceBoard.Team == currentPiece.Team)  && (
+				(pieceBoard.axisY > KING.axisY && pieceBoard.axisY < enemyPiece.axisY) || (pieceBoard.axisY < KING.axisY && pieceBoard.axisY > enemyPiece.axisY)) &&
+				pieceBoard.Piece != PieceType.KING;
+		}).toList();
 
-			if (otherPiece.Piece != PieceType.KING && otherPiece.Team == currentPiece.Team) return;
+		if (otherPiece.size() > 0) return;
 
-			// remove positions where the piece is not in the same column or row
-			currentPiece.positions.removeIf(currentPiecePosition -> (row == 0 && rowKing == 0) ? currentPiecePosition.axisX != KING.axisX : currentPiecePosition.axisY != KING.axisY);
-		}
+		// remove positions where the piece is not in the same column or row
+		currentPiece.positions.removeIf(currentPiecePosition -> (row == 0 && rowKing == 0) ? currentPiecePosition.axisX != KING.axisX : currentPiecePosition.axisY != KING.axisY);		}
 	}
 
 	public void pieceCanMove(Pieces currentPiece) {
