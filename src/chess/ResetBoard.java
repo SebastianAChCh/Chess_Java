@@ -64,7 +64,7 @@ public class ResetBoard {
 		board.pieces.add(new Pawn(2,1, board.SIZE_SQUARES, TeamType.BLACK, PieceType.PAWN, board, (byte) 6));
 		board.pieces.add(new Pawn(1,1, board.SIZE_SQUARES, TeamType.BLACK, PieceType.PAWN, board, (byte) 7));
 		board.pieces.add(new Pawn(0,1, board.SIZE_SQUARES, TeamType.BLACK, PieceType.PAWN, board, (byte) 8));
-		board.pieces.add(new Rook(3,4, board.SIZE_SQUARES, TeamType.BLACK, PieceType.ROOK, board, (byte) 1));
+		board.pieces.add(new Rook(7,0, board.SIZE_SQUARES, TeamType.BLACK, PieceType.ROOK, board, (byte) 1));
 		board.pieces.add(new Rook(0,0, board.SIZE_SQUARES, TeamType.BLACK, PieceType.ROOK, board, (byte) 2));
 		board.pieces.add(new Knight(6,0, board.SIZE_SQUARES, TeamType.BLACK, PieceType.KNIGHT, board, (byte) 1));
 		board.pieces.add(new Knight(1,0, board.SIZE_SQUARES, TeamType.BLACK, PieceType.KNIGHT, board, (byte) 2));

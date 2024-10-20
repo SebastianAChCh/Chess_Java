@@ -110,7 +110,6 @@ public class CheckKing {
 		int diagonalY = Math.abs(enemyPiece.originAxisY - currentPiece.originAxisY);
 	
 		if (diagonalX == diagonalY && diagonalXKing == diagonalYKing) {
-			System.out.println("diagonal " + currentPiece.positions.size());
 			// check if there is another piece that can protect the king, for example, the rook wants to be moved and behind there's a pawn that can
 			// protect the king
 			var otherPiece = board.pieces.stream().filter(pieceBoard -> {
@@ -151,7 +150,6 @@ public class CheckKing {
 				));
 			});
 		}else if((row == 0 && rowKing == 0) || (col == 0 && colKing == 0)){
-			System.out.println("vertical" + " " + currentPiece.positions.size());
 		// check if there is another piece that can protect the king, for example, the rook wants to be moved and behind there's a pawn that can
 		// protect the king
 		var otherPiece = board.pieces.stream().filter(pieceBoard -> {
@@ -262,20 +260,21 @@ public class CheckKing {
 			currentPiece.positions.removeIf(position -> position.axisX != enemyPiece.axisX && position.axisY != enemyPiece.axisY);
 
 		}else if(currentPiece.Piece == PieceType.QUEEN){
+			//BISHOP
+			if(currentPiece.originAxisX > enemyPiece.originAxisX && currentPiece.originAxisY > enemyPiece.originAxisY)
+			currentPiece.positions.removeIf(posDel -> !(posDel.axisX > enemyPiece.axisX && posDel.axisY > enemyPiece.axisY));
+			else if(currentPiece.originAxisX < enemyPiece.originAxisX && currentPiece.originAxisY < enemyPiece.originAxisY)
+			currentPiece.positions.removeIf(posDel -> !(posDel.axisX < enemyPiece.axisX && posDel.axisY < enemyPiece.axisY));
+			else if(currentPiece.originAxisX < enemyPiece.originAxisX && currentPiece.originAxisY > enemyPiece.originAxisY)
+			currentPiece.positions.removeIf(posDel -> !(posDel.axisX < enemyPiece.axisX && posDel.axisY > enemyPiece.axisY));
+			else if(currentPiece.originAxisX > enemyPiece.originAxisX && currentPiece.originAxisY < enemyPiece.originAxisY)
+			currentPiece.positions.removeIf(posDel -> !(posDel.axisX > enemyPiece.axisX && posDel.axisY < enemyPiece.axisY));
+
 			//ROOK
 			if(currentPiece.originAxisX > enemyPiece.axisX) currentPiece.positions.removeIf(posDel -> !(posDel.axisX > enemyPiece.axisX));
 			else if(currentPiece.originAxisX < enemyPiece.axisX) currentPiece.positions.removeIf(posDel -> !(posDel.axisX < enemyPiece.axisX));
 			else if(currentPiece.originAxisY > enemyPiece.axisY) currentPiece.positions.removeIf(posDel -> !(posDel.axisY > enemyPiece.axisY));
 			else if(currentPiece.originAxisY < enemyPiece.axisY) currentPiece.positions.removeIf(posDel -> !(posDel.axisY < enemyPiece.axisY));
-			//BISHOP
-			if(currentPiece.originAxisX > enemyPiece.originAxisX && currentPiece.originAxisY > enemyPiece.originAxisY)
-				currentPiece.positions.removeIf(posDel -> !(posDel.axisX > enemyPiece.axisX && posDel.axisY > enemyPiece.axisY));
-			else if(currentPiece.originAxisX < enemyPiece.originAxisX && currentPiece.originAxisY < enemyPiece.originAxisY)
-				currentPiece.positions.removeIf(posDel -> !(posDel.axisX < enemyPiece.axisX && posDel.axisY < enemyPiece.axisY));
-			else if(currentPiece.originAxisX < enemyPiece.originAxisX && currentPiece.originAxisY > enemyPiece.originAxisY)
-				currentPiece.positions.removeIf(posDel -> !(posDel.axisX < enemyPiece.axisX && posDel.axisY > enemyPiece.axisY));
-			else if(currentPiece.originAxisX > enemyPiece.originAxisX && currentPiece.originAxisY < enemyPiece.originAxisY)
-				currentPiece.positions.removeIf(posDel -> !(posDel.axisX > enemyPiece.axisX && posDel.axisY < enemyPiece.axisY));
 
 		}else if(currentPiece.Piece == PieceType.ROOK){
 			if(currentPiece.originAxisX > enemyPiece.axisX) currentPiece.positions.removeIf(posDel -> !(posDel.axisX > enemyPiece.axisX));
@@ -323,20 +322,28 @@ public class CheckKing {
 			canEatEnemy(currentPiece, enemy);
 			board.pieceProtectKing = currentPiece.positions.size() > 0;
 		}else if(board.pieceAttackingKing.Piece == PieceType.ROOK){
-			boolean rowKing = board.pieceAttackingKing.axisX == KING.axisX;
-			boolean colKing = board.pieceAttackingKing.axisY == KING.axisY;
+			boolean colKing = board.pieceAttackingKing.axisX == KING.axisX;
+			boolean rowKing = board.pieceAttackingKing.axisY == KING.axisY;
 
 			currentPiece.positions.removeIf(position -> {
 				if(position.axisX == enemy.axisX && position.axisY == enemy.axisY) return false;
 
-				if(rowKing && enemy.axisY > KING.axisY)
-					return (position.axisX != enemy.axisX) || position.axisX == enemy.axisX && enemy.axisY < KING.axisY;
-				else if(rowKing && enemy.axisY < KING.axisY)
-					return (position.axisX != enemy.axisX)  || position.axisX == enemy.axisX && enemy.axisY > KING.axisY;
-				else if(colKing && enemy.axisX > KING.axisX)
-					return (position.axisY != enemy.axisY) || position.axisY == enemy.axisY && enemy.axisX < KING.axisX;
-				else if(colKing && enemy.axisX < KING.axisX) 
-					return (position.axisY != enemy.axisY) || position.axisY == enemy.axisY && enemy.axisX > KING.axisX;
+				if(colKing && enemy.axisY > KING.axisY)
+				{
+					return (position.axisX != enemy.axisX) || position.axisX == enemy.axisX && position.axisY < KING.axisY && position.axisY < enemy.axisY;
+				}
+				else if(colKing && enemy.axisY < KING.axisY)
+				{
+					return (position.axisX != enemy.axisX)  || position.axisX == enemy.axisX && position.axisY > KING.axisY  && position.axisY > enemy.axisY;
+				}
+				else if(rowKing && enemy.axisX > KING.axisX)
+				{
+					return (position.axisY != enemy.axisY) || position.axisY == enemy.axisY && position.axisX < KING.axisX && position.axisX < enemy.axisX;
+				}
+				else if(rowKing && enemy.axisX < KING.axisX)
+				{
+					return (position.axisY != enemy.axisY) || position.axisY == enemy.axisY && position.axisX > KING.axisX && position.axisX < enemy.axisX;
+				}
 
 				return false;
 			});
@@ -347,42 +354,49 @@ public class CheckKing {
 			final int IS_IN_DIAGONAL_X_KING = Math.abs(enemy.originAxisX - KING.originAxisX);
 			final int IS_IN_DIAGONAL_Y_KING = Math.abs(enemy.originAxisY - KING.originAxisY);
 			if(IS_IN_DIAGONAL_X_KING == IS_IN_DIAGONAL_Y_KING){
-				currentPiece.positions.removeIf(currentPiecePosition -> {
-					int tempDiagonalX = Math.abs(currentPiecePosition.axisX - enemy.axisX);
-					int tempDiagonalY = Math.abs(currentPiecePosition.axisY - enemy.axisY);
-					int tempDiagonalXKing = Math.abs(currentPiecePosition.axisX - KING.axisX);
-					int tempDiagonalYKing = Math.abs(currentPiecePosition.axisY - KING.axisY);
+				currentPiece.positions.removeIf(position -> {
+					int tempDiagonalX = Math.abs(position.axisX - enemy.axisX);
+					int tempDiagonalY = Math.abs(position.axisY - enemy.axisY);
+					int tempDiagonalXKing = Math.abs(position.axisX - KING.axisX);
+					int tempDiagonalYKing = Math.abs(position.axisY - KING.axisY);
 		
-					if(currentPiecePosition.axisX == enemy.axisX && currentPiecePosition.axisY == enemy.axisY) return false;
+					if(position.axisX == enemy.axisX && position.axisY == enemy.axisY) return false;
 		
 					return !((tempDiagonalX == tempDiagonalY && tempDiagonalXKing == tempDiagonalYKing) && (
-						(currentPiecePosition.axisX > KING.axisX && currentPiecePosition.axisY > KING.axisY && currentPiecePosition.axisX < enemy.axisX && currentPiecePosition.axisY < enemy.axisY)||
-						(currentPiecePosition.axisX < KING.axisX && currentPiecePosition.axisY < KING.axisY && currentPiecePosition.axisX > enemy.axisX && currentPiecePosition.axisY > enemy.axisY)||
-						(currentPiecePosition.axisX < KING.axisX && currentPiecePosition.axisY > KING.axisY && currentPiecePosition.axisX > enemy.axisX && currentPiecePosition.axisY < enemy.axisY)||
-						(currentPiecePosition.axisX > KING.axisX && currentPiecePosition.axisY < KING.axisY && currentPiecePosition.axisX < enemy.axisX && currentPiecePosition.axisY > enemy.axisY)
+						(position.axisX > KING.axisX && position.axisY > KING.axisY && position.axisX < enemy.axisX && position.axisY < enemy.axisY)||
+						(position.axisX < KING.axisX && position.axisY < KING.axisY && position.axisX > enemy.axisX && position.axisY > enemy.axisY)||
+						(position.axisX < KING.axisX && position.axisY > KING.axisY && position.axisX > enemy.axisX && position.axisY < enemy.axisY)||
+						(position.axisX > KING.axisX && position.axisY < KING.axisY && position.axisX < enemy.axisX && position.axisY > enemy.axisY)
 					));
 				});
 				return;
 			}
 			//ROOK
-			boolean rowKing = board.pieceAttackingKing.axisX == KING.axisX;
-			boolean colKing = board.pieceAttackingKing.axisY == KING.axisY;
-			
+			boolean colKing = board.pieceAttackingKing.axisX == KING.axisX;
+			boolean rowKing = board.pieceAttackingKing.axisY == KING.axisY;
+
 			currentPiece.positions.removeIf(position -> {
 				if(position.axisX == enemy.axisX && position.axisY == enemy.axisY) return false;
 
-				if(rowKing && enemy.axisY > KING.axisY)
-					return (position.axisX != enemy.axisX) || position.axisX == enemy.axisX && enemy.axisY < KING.axisY;
-				else if(rowKing && enemy.axisY < KING.axisY)
-					return (position.axisX != enemy.axisX)  || position.axisX == enemy.axisX && enemy.axisY > KING.axisY;
-				else if(colKing && enemy.axisX > KING.axisX)
-					return (position.axisY != enemy.axisY) || position.axisY == enemy.axisY && enemy.axisX < KING.axisX;
-				else if(colKing && enemy.axisX < KING.axisX) 
-					return (position.axisY != enemy.axisY) || position.axisY == enemy.axisY && enemy.axisX > KING.axisX;
+				if(colKing && enemy.axisY > KING.axisY)
+				{
+					return (position.axisX != enemy.axisX) || position.axisX == enemy.axisX && position.axisY < KING.axisY && position.axisY < enemy.axisY;
+				}
+				else if(colKing && enemy.axisY < KING.axisY)
+				{
+					return (position.axisX != enemy.axisX)  || position.axisX == enemy.axisX && position.axisY > KING.axisY  && position.axisY > enemy.axisY;
+				}
+				else if(rowKing && enemy.axisX > KING.axisX)
+				{
+					return (position.axisY != enemy.axisY) || position.axisY == enemy.axisY && position.axisX < KING.axisX && position.axisX < enemy.axisX;
+				}
+				else if(rowKing && enemy.axisX < KING.axisX)
+				{
+					return (position.axisY != enemy.axisY) || position.axisY == enemy.axisY && position.axisX > KING.axisX && position.axisX < enemy.axisX;
+				}
 
 				return false;
 			});
-
 			board.pieceProtectKing = currentPiece.positions.size() > 0;
 		}
 	}

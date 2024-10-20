@@ -97,6 +97,7 @@ public abstract class Pieces {
 		checkKing.getPath(KING);
 		if(board.sizePosArr > 0) return;
 		board.enemyPieces.clear();
+
 		//check which positions where king will move are attacked by other pieces
 		if(board.sizePosArr > 0) return;
 		checkKing.pieceProtectKing();
