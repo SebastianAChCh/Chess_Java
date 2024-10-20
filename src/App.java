@@ -20,7 +20,7 @@ public class App extends JFrame{
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setTitle("Chess Java");
-		URL url = getClass().getResource("/sprites/Black/knight.gif");
+		URL url = getClass().getResource("/sprites/icon/Icon.png");
 		ImageIcon icon = new ImageIcon(url);
 		this.setIconImage(icon.getImage());
 	}
